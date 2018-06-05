@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="175dp"
     android:gravity="center_horizontal"
-    android:layout_marginVertical="10dp"
+    android:layout_marginVertical="8dp"
     xmlns:tools="http://schemas.android.com/tools">
     <android.support.constraint.ConstraintLayout
         android:layout_width="352dp"
