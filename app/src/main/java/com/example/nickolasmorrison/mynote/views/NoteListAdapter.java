@@ -3,6 +3,7 @@ package com.example.nickolasmorrison.mynote.views;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +38,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
             Note current = notes.get(position);
             holder.notePreviewView.setText(current.text);
             holder.titleView.setText(current.title);
-            DateFormat df = new SimpleDateFormat("MMMMM dd, yyyy");
+            DateFormat df = SimpleDateFormat.getDateInstance();
             holder.dateView.setText(df.format(current.date));
         }
     }
@@ -47,7 +48,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
         return notes != null? notes.size() : 0;
     }
 
-    void setNotes(List<Note> notes) {
+    public void setNotes(List<Note> notes) {
         this.notes = notes;
         notifyDataSetChanged();
     }

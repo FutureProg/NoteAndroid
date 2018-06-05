@@ -1,10 +1,13 @@
 package com.example.nickolasmorrison.mynote.views.fragments;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +18,8 @@ import com.example.nickolasmorrison.mynote.data.NoteViewModel;
 import com.example.nickolasmorrison.mynote.storage.Note;
 import com.example.nickolasmorrison.mynote.storage.NoteRepository;
 import com.example.nickolasmorrison.mynote.views.NoteListAdapter;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,6 +52,12 @@ public class MainFragment extends Fragment {
         if (getArguments() != null) {
         }
         noteVM = ViewModelProviders.of(this).get(NoteViewModel.class);
+        noteVM.getAllNotes().observe(this, new Observer<List<Note>>() {
+            @Override
+            public void onChanged(@Nullable List<Note> notes) {
+                listAdapter.setNotes(notes);
+            }
+        });
     }
 
     @Override
@@ -57,6 +68,10 @@ public class MainFragment extends Fragment {
         listAdapter = new NoteListAdapter(this.getContext());
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setAdapter(listAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        view.findViewById(R.id.floatingActionButton).setOnClickListener((View v) -> {
+                addNote(v);
+        });
         return view;
     }
 

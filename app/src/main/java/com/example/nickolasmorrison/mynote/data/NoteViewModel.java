@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.example.nickolasmorrison.mynote.storage.NoteRepository;
 import com.example.nickolasmorrison.mynote.storage.Note;
@@ -21,9 +22,11 @@ public class NoteViewModel extends AndroidViewModel{
         allNotes = repository.getAllNotes();
     }
 
-    LiveData<List<Note>> getAllNotes() {
+    public LiveData<List<Note>> getAllNotes() {
         return allNotes;
     }
 
-    public void insert(Note note) {repository.insert(note);}
+    public void insert(Note note) {
+        repository.insert(note);
+    }
 }

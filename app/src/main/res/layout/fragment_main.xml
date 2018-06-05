@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingTop="8dp"
     tools:context=".views.fragments.MainFragment">
 
     <android.support.design.widget.FloatingActionButton
@@ -17,6 +18,7 @@
         android:src="@drawable/ic_add_white_24dp"
         app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"
+        android:onClick="addNote"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <android.support.v7.widget.RecyclerView
@@ -24,7 +26,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:listitem="@layout/note_recycler_item"
-        android:onClick="addNote"
         >
 
     </android.support.v7.widget.RecyclerView>

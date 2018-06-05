@@ -26,6 +26,7 @@ public class TypeDBConverters {
 
     @TypeConverter
     public static String fromStringArray(String[] array) {
+        if(array == null) return null;
         String re = "";
         for(String s : array) {
             re += s + Constants.StringDelim;
@@ -35,6 +36,7 @@ public class TypeDBConverters {
 
     @TypeConverter
     public static String[] toStringArray(String str) {
+        if(str == null) return null;
         return str.split(Constants.StringDelim);
     }
 
