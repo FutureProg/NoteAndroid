@@ -7,20 +7,31 @@ import android.arch.persistence.room.TypeConverters;
 
 import java.util.Date;
 
+import io.reactivex.annotations.NonNull;
+
 @Entity
 @TypeConverters(TypeDBConverters.class)
 public class Note {
 
-    @PrimaryKey
+    public Note() {
+        this.date = new Date();
+    }
+
+    @PrimaryKey(autoGenerate =  true)
+    @NonNull
     int id;
 
+    @ColumnInfo( name = "title" )
+    public String title;
+
     @ColumnInfo( name = "text" )
-    String text;
+    public String text;
 
     @ColumnInfo( name = "images" )
-    String[] images;
+    public String[] images;
 
     @ColumnInfo( name = "date" )
-    Date date;
+    public Date date;
+
 
 }
