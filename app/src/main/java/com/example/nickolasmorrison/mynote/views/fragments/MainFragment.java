@@ -3,12 +3,16 @@ package com.example.nickolasmorrison.mynote.views.fragments;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +22,7 @@ import com.example.nickolasmorrison.mynote.data.NoteViewModel;
 import com.example.nickolasmorrison.mynote.storage.Note;
 import com.example.nickolasmorrison.mynote.storage.NoteRepository;
 import com.example.nickolasmorrison.mynote.views.NoteListAdapter;
+import com.example.nickolasmorrison.mynote.views.NoteListTouchHelper;
 
 import java.util.List;
 
@@ -29,7 +34,7 @@ import java.util.List;
  * Use the {@link MainFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements NoteListTouchHelper.Listener {
 
     private InteractionListener mListener;
     private NoteListAdapter listAdapter;
@@ -69,6 +74,16 @@ public class MainFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setAdapter(listAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new NoteListTouchHelper(
+                0,
+                ItemTouchHelper.LEFT,
+                this
+        );
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
+
+        // FAB Callback
         view.findViewById(R.id.floatingActionButton).setOnClickListener((View v) -> {
                 addNote(v);
         });
@@ -97,6 +112,26 @@ public class MainFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+        if(viewHolder != null) {
+            final Note note = listAdapter.getNote(viewHolder.getAdapterPosition());
+            final String title = note.title;
+            noteVM.delete(note);
+
+            Snackbar snackbar = Snackbar.make(
+                    getView().findViewById(R.id.constraint_layout),
+                    "Deleted Note " + title,
+                    Snackbar.LENGTH_LONG
+            );
+            snackbar.setAction("Undo", (View v) -> {
+                noteVM.insert(note);
+            });
+            snackbar.setActionTextColor(Color.YELLOW);
+            snackbar.show();
+        }
     }
 
     /**

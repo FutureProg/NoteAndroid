@@ -53,16 +53,32 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
         notifyDataSetChanged();
     }
 
+    public Note getNote(int index){
+        if(this.notes == null || index >= this.notes.size()) return null;
+        return this.notes.get(index);
+    }
+
     class NoteViewHolder extends  RecyclerView.ViewHolder{
         private final TextView titleView;
         private final TextView dateView;
         private final TextView notePreviewView;
+        private final View card;
+        private final View cardContainer;
 
         public NoteViewHolder(View itemView) {
             super(itemView);
             this.titleView = itemView.findViewById(R.id.note_title);
             this.dateView = itemView.findViewById(R.id.note_date);
             this.notePreviewView = itemView.findViewById(R.id.note_text_preview);
+            this.card = itemView.findViewById(R.id.note_card);
+            this.cardContainer = itemView.findViewById(R.id.note_card_container);
+        }
+
+        public View getCardContainer() {
+            return cardContainer;
+        }
+        public View getCard(){
+            return card;
         }
     }
 
