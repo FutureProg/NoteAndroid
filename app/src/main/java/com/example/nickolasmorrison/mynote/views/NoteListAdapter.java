@@ -54,7 +54,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
     }
 
     public Note getNote(int index){
-        if(this.notes == null || index >= this.notes.size()) return null;
+        if(this.notes == null || index >= this.notes.size() || index < 0) return null;
         return this.notes.get(index);
     }
 

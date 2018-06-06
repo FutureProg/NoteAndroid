@@ -78,8 +78,9 @@ public class MainFragment extends Fragment implements NoteListTouchHelper.Listen
 
         ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new NoteListTouchHelper(
                 0,
-                ItemTouchHelper.LEFT,
-                this
+                ItemTouchHelper.RIGHT,
+                this,
+                view.findViewById(R.id.delete_section)
         );
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
 
@@ -118,6 +119,7 @@ public class MainFragment extends Fragment implements NoteListTouchHelper.Listen
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
         if(viewHolder != null) {
             final Note note = listAdapter.getNote(viewHolder.getAdapterPosition());
+            if( note == null )return;
             final String title = note.title;
             noteVM.delete(note);
 
