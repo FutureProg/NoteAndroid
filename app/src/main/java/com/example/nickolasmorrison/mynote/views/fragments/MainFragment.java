@@ -26,15 +26,8 @@ import com.example.nickolasmorrison.mynote.views.NoteListTouchHelper;
 
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MainFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link MainFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class MainFragment extends Fragment implements NoteListTouchHelper.Listener {
+public class MainFragment extends Fragment implements NoteListTouchHelper.Listener,
+    NoteListAdapter.OnClickListener{
 
     private InteractionListener mListener;
     private NoteListAdapter listAdapter;
@@ -134,6 +127,11 @@ public class MainFragment extends Fragment implements NoteListTouchHelper.Listen
             snackbar.setActionTextColor(Color.YELLOW);
             snackbar.show();
         }
+    }
+
+    @Override
+    public void onClick(View view, Note note) {
+        if(note == null) return;
     }
 
     /**

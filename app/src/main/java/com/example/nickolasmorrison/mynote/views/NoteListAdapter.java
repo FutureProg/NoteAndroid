@@ -23,6 +23,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
 
     private final LayoutInflater inflater;
     private List<Note> notes;
+    private OnClickListener clickListener;
 
     public NoteListAdapter(Context context) {
         inflater = LayoutInflater.from(context);
@@ -38,13 +39,18 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
     @Override
     public void onBindViewHolder(@NonNull NoteViewHolder holder, int position) {
         if(notes != null){
-            Note current = notes.get(position);
+            final Note current = notes.get(position);
             holder.notePreviewView.setText(current.text);
             holder.titleView.setText(current.title);
             DateFormat df = SimpleDateFormat.getDateInstance();
             holder.dateView.setText(df.format(current.date));
             if(current.images == null){
                 holder.noteImageView.setVisibility(View.GONE);
+            }
+            if(clickListener != null) {
+                holder.card.setOnClickListener((View v) -> {
+                    clickListener.onClick(v,current);
+                });
             }
         }
     }
@@ -62,6 +68,10 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
     public Note getNote(int index){
         if(this.notes == null || index >= this.notes.size() || index < 0) return null;
         return this.notes.get(index);
+    }
+
+    public interface OnClickListener{
+        void onClick(View view, Note note);
     }
 
     class NoteViewHolder extends  RecyclerView.ViewHolder{
