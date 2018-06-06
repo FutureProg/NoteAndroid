@@ -35,11 +35,12 @@
 
             <TextView
                 android:id="@+id/note_date"
-                android:layout_width="wrap_content"
+                android:layout_width="77dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:layout_marginTop="20dp"
                 android:text="TextView"
+                android:textAlignment="textEnd"
                 android:textAppearance="@android:style/TextAppearance.Material.Caption"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -56,8 +57,24 @@
                 android:textAppearance="@android:style/TextAppearance.Material.Body1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.4"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@+id/note_image_preview" />
+
+            <ImageView
+                android:id="@+id/note_image_preview"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/note_text_preview"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/note_title"
+                app:layout_constraintVertical_bias="0.594"
+                app:srcCompat="@drawable/ic_launcher_background" />
         </android.support.constraint.ConstraintLayout>
     </LinearLayout>
 </RelativeLayout>

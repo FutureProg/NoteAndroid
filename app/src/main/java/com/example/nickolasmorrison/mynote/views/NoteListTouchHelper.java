@@ -123,6 +123,7 @@ public class NoteListTouchHelper extends ItemTouchHelper.SimpleCallback {
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
         if(viewHolder instanceof NoteListAdapter.NoteViewHolder) {
+            deleteSectionOpened = false;
             NoteListAdapter.NoteViewHolder holder = (NoteListAdapter.NoteViewHolder)viewHolder;
             deleteBG.clearAnimation();
             deleteContent.setVisibility(View.VISIBLE);
@@ -141,11 +142,10 @@ public class NoteListTouchHelper extends ItemTouchHelper.SimpleCallback {
                     listener.onSwiped(viewHolder, direction, viewHolder.getAdapterPosition());
                     animation.removeListener(this);
                     deleteBG.clearAnimation();
-                    deleteSectionOpened = false;
                     super.onAnimationEnd(animation);
                 }
             });
-            animSet.play(closeFully).after(200).after(openFully);
+            animSet.play(closeFully).after(openFully);
             animSet.start();
 
         }

@@ -2,11 +2,14 @@ package com.example.nickolasmorrison.mynote.views;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.nickolasmorrison.mynote.R;
@@ -40,6 +43,9 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
             holder.titleView.setText(current.title);
             DateFormat df = SimpleDateFormat.getDateInstance();
             holder.dateView.setText(df.format(current.date));
+            if(current.images == null){
+                holder.noteImageView.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -62,6 +68,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
         private final TextView titleView;
         private final TextView dateView;
         private final TextView notePreviewView;
+        private final ImageView noteImageView;
         private final View card;
         private final View cardContainer;
 
@@ -72,6 +79,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
             this.notePreviewView = itemView.findViewById(R.id.note_text_preview);
             this.card = itemView.findViewById(R.id.note_card);
             this.cardContainer = itemView.findViewById(R.id.note_card_container);
+            this.noteImageView = itemView.findViewById(R.id.note_image_preview);
         }
 
         public View getCardContainer() {
