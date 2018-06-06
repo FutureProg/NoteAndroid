@@ -7,6 +7,94 @@
     tools:context=".views.fragments.EditFragment">
 
 
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/note_image_container"
+        android:layout_width="0dp"
+        android:layout_height="66dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/note_title">
+
+        <LinearLayout
+            android:id="@+id/image_hint_text"
+            android:layout_width="220dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="1dp"
+            android:background="@color/subtle_grey"
+            android:gravity="center_vertical|center_horizontal"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/view_images_button"
+            app:layout_constraintHorizontal_weight="4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="@string/add_images_hint"
+                android:textAlignment="center"
+                android:textAppearance="@android:style/TextAppearance.Material.Caption" />
+
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/note_image_list"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:isScrollContainer="false"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toStartOf="@+id/view_images_button"
+            app:layout_constraintStart_toStartOf="@+id/image_hint_text" />
+
+        <ImageButton
+            android:id="@+id/add_image_button"
+            style="@android:style/Widget.Material.ImageButton"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorAccent"
+            android:contentDescription="@string/add_image_button_content_description"
+            android:src="@drawable/ic_add_white_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/view_images_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="64dp" />
+
+        <ImageButton
+            android:id="@+id/view_images_button"
+            style="@android:style/Widget.Material.ImageButton"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorAccent"
+            android:src="@drawable/ic_photo_library_white_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/add_image_button"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/image_hint_text"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
     <Button
         android:id="@+id/done_button"
         style="@android:style/Widget.Material.Button.Borderless"
@@ -17,20 +105,58 @@
         android:text="@string/done_button"
         android:textAppearance="@android:style/TextAppearance.Material.Widget.Button.Borderless.Colored"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constrainEnd_toEndOf="parent" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/note_title"
         android:layout_width="304dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="26dp"
         android:layout_marginStart="26dp"
         android:layout_marginTop="72dp"
+        android:background="@android:color/transparent"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Name"
+        android:hint="@string/note_title_hint"
+        android:inputType="text"
+        android:singleLine="true"
+        android:textAlignment="center"
+        android:textAppearance="@android:style/TextAppearance.Material.Widget.Toolbar.Title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:id="@+id/note_text_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:minHeight="250dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider">
+
+        <EditText
+            android:id="@+id/note_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:ems="10"
+            android:hint="@string/note_content_hint"
+            android:inputType="text|textCapSentences|textAutoCorrect|textMultiLine"
+            android:textAppearance="@android:style/TextAppearance.Material.Body1"
+            />
+    </ScrollView>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginTop="8dp"
+        android:background="?android:attr/listDivider"
+        android:elevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/note_image_container" />
+
 </android.support.constraint.ConstraintLayout>

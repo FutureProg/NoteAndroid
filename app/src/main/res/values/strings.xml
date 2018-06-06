@@ -5,4 +5,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="delete_swipe_prompt">DELETE</string>
     <string name="done_button">DONE</string>
+    <string name="add_images_hint">Add Images...</string>
+    <string name="note_title_hint">Untitled Note</string>
+    <string name="note_content_hint">Note to self...</string>
+    <string name="add_image_button_content_description">Add Image</string>
+    <string name="view_images_button_content_description">View All Images</string>
 </resources>
