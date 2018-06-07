@@ -31,8 +31,22 @@ public class NoteRepository {
         new deleteAsyncTask(noteDao).execute(note);
     }
 
+    public void update(Note... note) { new updateAsyncTask(noteDao).execute(note);}
+
     public LiveData<Note> getById(int id){
         return noteDao.getById(id);
+    }
+
+    private static class updateAsyncTask extends AsyncTask<Note, Void, Void> {
+
+        private NoteDao dao;
+        public updateAsyncTask(NoteDao dao){ this.dao = dao;}
+
+        @Override
+        protected Void doInBackground(Note... notes) {
+            dao.updateNotes(notes);
+            return null;
+        }
     }
 
 //    private static class getByQuery extends AsyncTask<Object, Void,  LiveData<List<Note>> > {

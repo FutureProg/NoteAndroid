@@ -3,7 +3,6 @@ package com.example.nickolasmorrison.mynote.views.fragments;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,11 +18,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.nickolasmorrison.mynote.R;
 import com.example.nickolasmorrison.mynote.data.NoteViewModel;
 import com.example.nickolasmorrison.mynote.storage.Note;
-import com.example.nickolasmorrison.mynote.storage.NoteRepository;
 import com.example.nickolasmorrison.mynote.views.NoteListAdapter;
 import com.example.nickolasmorrison.mynote.views.NoteListTouchHelper;
 
@@ -143,10 +142,23 @@ public class MainFragment extends Fragment implements NoteListTouchHelper.Listen
     public void onClick(View view, Note note) {
         Log.v("MainFragment","Swap to editor with note: " + note);
         if(note == null) return;
-        EditFragment fragment = EditFragment.newInstance(note);
+
+        TextView titleView = view.findViewById(R.id.note_title);
+        Log.v(MainFragment.class.getSimpleName(),titleView.getTransitionName());
+        EditFragment fragment = EditFragment.newInstance(note, titleView.getTransitionName());
+
         FragmentManager manager = this.getActivity().getSupportFragmentManager();
-        manager.beginTransaction().replace(R.id.fragment_container,fragment)
-                .addToBackStack(null).commit();
+        manager.beginTransaction()
+                .replace(R.id.fragment_container,fragment,EditFragment.class.getSimpleName())
+                .addSharedElement(titleView,titleView.getTransitionName())
+                .addToBackStack(null)
+                .commit();
+
+
+//        this.setExitTransition(fadeTransform);
+//        fragment.setEnterTransition(fadeTransform);
+//        fragment.setSharedElementReturnTransition(moveTransform);
+//        fragment.setSharedElementEnterTransition(moveTransform);
     }
 
     /**

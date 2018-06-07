@@ -110,7 +110,7 @@
 
     <EditText
         android:id="@+id/note_title"
-        android:layout_width="304dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="26dp"
         android:layout_marginStart="26dp"
@@ -120,36 +120,38 @@
         android:hint="@string/note_title_hint"
         android:inputType="text"
         android:singleLine="true"
-        android:textAlignment="center"
+        android:textAlignment="textStart"
         android:textAppearance="@android:style/TextAppearance.Material.Widget.Toolbar.Title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <ScrollView
         android:id="@+id/note_text_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:clickable="true"
         android:minHeight="250dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider">
+            <EditText
+                android:id="@+id/note_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:ems="10"
+                android:hint="@string/note_content_hint"
+                android:inputType="text|textCapSentences|textAutoCorrect|textMultiLine"
+                android:paddingBottom="8dp"
+                android:paddingLeft="26dp"
+                android:paddingRight="26dp"
+                android:paddingTop="8dp"
+                android:textAppearance="@android:style/TextAppearance.Material.Body1" />
 
-        <EditText
-            android:id="@+id/note_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:ems="10"
-            android:hint="@string/note_content_hint"
-            android:inputType="text|textCapSentences|textAutoCorrect|textMultiLine"
-            android:paddingBottom="8dp"
-            android:paddingLeft="26dp"
-            android:paddingRight="26dp"
-            android:paddingTop="8dp"
-            android:textAppearance="@android:style/TextAppearance.Material.Body1" />
     </ScrollView>
 
     <View

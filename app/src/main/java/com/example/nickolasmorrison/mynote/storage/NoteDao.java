@@ -1,11 +1,13 @@
 package com.example.nickolasmorrison.mynote.storage;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.TypeConverters;
+import android.arch.persistence.room.Update;
 
 import java.util.Date;
 import java.util.List;
@@ -25,6 +27,12 @@ public interface NoteDao {
 
     @Query( "SELECT * FROM note WHERE text LIKE (:substring)")
     LiveData<List<Note>> getAllByTextContaining(String substring);
+
+    @Update
+    void updateNote(Note note);
+
+    @Update
+    void updateNotes(Note... notes);
 
     @Insert
     void insertAll(Note ...notes);
