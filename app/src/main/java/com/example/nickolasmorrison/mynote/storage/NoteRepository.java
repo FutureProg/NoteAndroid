@@ -11,6 +11,8 @@ public class NoteRepository {
     private NoteDao noteDao;
     private LiveData<List<Note>> allNotes;
 
+    public static final int QUERY_TYPE_BY_ID = 0, QUERY_TYPE_BY_DATE = 1;
+
     public NoteRepository(Application application){
         AppDatabase db = AppDatabase.getDatabase(application);
         noteDao = db.noteDao();
@@ -28,6 +30,30 @@ public class NoteRepository {
     public void delete(Note note) {
         new deleteAsyncTask(noteDao).execute(note);
     }
+
+    public LiveData<Note> getById(int id){
+        return noteDao.getById(id);
+    }
+
+//    private static class getByQuery extends AsyncTask<Object, Void,  LiveData<List<Note>> > {
+//
+//        private NoteDao dao;
+//        final int queryType;
+//
+//        public getByQuery(NoteDao dao, int queryType){
+//            this.dao = dao;
+//            this.queryType = queryType;
+//        }
+//
+//        @Override
+//        protected  LiveData<List<Note>>  doInBackground(Object... data) {
+//            switch (queryType) {
+//                case QUERY_TYPE_BY_ID:
+//                return dao.getAllById(new int[]{(int) data[0]});
+//            }
+//            return null;
+//        }
+//    }
 
     private static class deleteAsyncTask extends AsyncTask<Note, Void, Void> {
 

@@ -17,14 +17,14 @@ public interface NoteDao {
     @Query( "SELECT * FROM note" )
     LiveData<List<Note>> getAll();
 
-    @Query( "SELECT * FROM note WHERE id in (:noteIds)" )
-    List<Note> getAllById(int[] noteIds);
+    @Query( "SELECT * FROM note WHERE id = (:noteId)" )
+    LiveData<Note> getById(int noteId);
 
     @Query( "SELECT * FROM note WHERE date = (:date)")
-    List<Note> getAllByDate(Date date);
+    LiveData<List<Note>> getAllByDate(Date date);
 
     @Query( "SELECT * FROM note WHERE text LIKE (:substring)")
-    List<Note> getAllByTextContaining(String substring);
+    LiveData<List<Note>> getAllByTextContaining(String substring);
 
     @Insert
     void insertAll(Note ...notes);

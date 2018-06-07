@@ -3,16 +3,19 @@ package com.example.nickolasmorrison.mynote.views.fragments;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +36,8 @@ public class MainFragment extends Fragment implements NoteListTouchHelper.Listen
     private NoteListAdapter listAdapter;
     private NoteViewModel noteVM;
 
+    private RecyclerView recyclerView;
+
     public MainFragment() {
         // Required empty public constructor
     }
@@ -50,12 +55,6 @@ public class MainFragment extends Fragment implements NoteListTouchHelper.Listen
         if (getArguments() != null) {
         }
         noteVM = ViewModelProviders.of(this).get(NoteViewModel.class);
-        noteVM.getAllNotes().observe(this, new Observer<List<Note>>() {
-            @Override
-            public void onChanged(@Nullable List<Note> notes) {
-                listAdapter.setNotes(notes);
-            }
-        });
     }
 
     @Override
@@ -63,8 +62,14 @@ public class MainFragment extends Fragment implements NoteListTouchHelper.Listen
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main, container, false);
-        listAdapter = new NoteListAdapter(this.getContext());
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
+        listAdapter = new NoteListAdapter(this.getContext(),this);
+        noteVM.getAllNotes().observe(this, new Observer<List<Note>>() {
+            @Override
+            public void onChanged(@Nullable List<Note> notes) {
+                listAdapter.setNotes(notes);
+            }
+        });
+        recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setAdapter(listAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -82,6 +87,11 @@ public class MainFragment extends Fragment implements NoteListTouchHelper.Listen
                 addNote(v);
         });
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
     }
 
     public void addNote(View view) {
@@ -131,7 +141,12 @@ public class MainFragment extends Fragment implements NoteListTouchHelper.Listen
 
     @Override
     public void onClick(View view, Note note) {
+        Log.v("MainFragment","Swap to editor with note: " + note);
         if(note == null) return;
+        EditFragment fragment = EditFragment.newInstance(note);
+        FragmentManager manager = this.getActivity().getSupportFragmentManager();
+        manager.beginTransaction().replace(R.id.fragment_container,fragment)
+                .addToBackStack(null).commit();
     }
 
     /**

@@ -13,7 +13,7 @@
         android:layout_height="66dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/note_title">
@@ -34,9 +34,8 @@
 
             <TextView
                 android:id="@+id/textView"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0"
                 android:text="@string/add_images_hint"
                 android:textAlignment="center"
                 android:textAppearance="@android:style/TextAppearance.Material.Caption" />
@@ -52,6 +51,7 @@
             android:layout_weight="1"
             android:isScrollContainer="false"
             android:orientation="horizontal"
+            android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@+id/view_images_button"
             app:layout_constraintStart_toStartOf="@+id/image_hint_text" />
 
@@ -86,6 +86,7 @@
             android:layout_marginTop="8dp"
             android:background="@color/colorAccent"
             android:src="@drawable/ic_photo_library_white_24dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/add_image_button"
             app:layout_constraintHorizontal_bias="0.5"
@@ -104,7 +105,8 @@
         android:layout_marginTop="8dp"
         android:text="@string/done_button"
         android:textAppearance="@android:style/TextAppearance.Material.Widget.Button.Borderless.Colored"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/note_title"
@@ -112,7 +114,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="26dp"
         android:layout_marginStart="26dp"
-        android:layout_marginTop="72dp"
+        android:layout_marginTop="64dp"
         android:background="@android:color/transparent"
         android:ems="10"
         android:hint="@string/note_title_hint"
@@ -137,23 +139,26 @@
 
         <EditText
             android:id="@+id/note_text"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:ems="10"
             android:hint="@string/note_content_hint"
             android:inputType="text|textCapSentences|textAutoCorrect|textMultiLine"
-            android:textAppearance="@android:style/TextAppearance.Material.Body1"
-            />
+            android:paddingBottom="8dp"
+            android:paddingLeft="26dp"
+            android:paddingRight="26dp"
+            android:paddingTop="8dp"
+            android:textAppearance="@android:style/TextAppearance.Material.Body1" />
     </ScrollView>
 
     <View
         android:id="@+id/divider"
         android:layout_width="0dp"
-        android:layout_height="2dp"
+        android:layout_height="1dp"
         android:layout_marginTop="8dp"
         android:background="?android:attr/listDivider"
-        android:elevation="4dp"
+        android:elevation="6dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/note_image_container" />

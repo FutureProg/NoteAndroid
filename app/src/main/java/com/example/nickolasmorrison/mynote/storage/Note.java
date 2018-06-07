@@ -2,6 +2,7 @@ package com.example.nickolasmorrison.mynote.storage;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 
@@ -20,6 +21,18 @@ public class Note {
     @PrimaryKey(autoGenerate =  true)
     @NonNull
     int id;
+
+    @Ignore
+    public int getId() {
+        return id;
+    }
+
+    @Ignore
+    @Override
+    public String toString() {
+        return "Note " + this.id + ": " + this.title;
+    }
+
 
     @ColumnInfo( name = "title" )
     public String title;

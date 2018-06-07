@@ -25,8 +25,9 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
     private List<Note> notes;
     private OnClickListener clickListener;
 
-    public NoteListAdapter(Context context) {
+    public NoteListAdapter(Context context, OnClickListener listener) {
         inflater = LayoutInflater.from(context);
+        this.clickListener = listener;
     }
 
     @NonNull
