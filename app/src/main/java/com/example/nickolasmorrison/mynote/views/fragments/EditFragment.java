@@ -90,11 +90,11 @@ public class EditFragment extends Fragment {
 
         Transition moveTransform = TransitionInflater.from(this.getContext())
                 .inflateTransition(R.transition.open_note_transform);
-        Transition m2 = moveTransform.clone();
         Transition fadeTransform = TransitionInflater.from(this.getContext())
                 .inflateTransition(android.R.transition.fade);
         setSharedElementEnterTransition(moveTransform);
-        setSharedElementReturnTransition(m2);
+        setSharedElementReturnTransition(moveTransform);
+        setEnterTransition(fadeTransform);
 
     }
 
