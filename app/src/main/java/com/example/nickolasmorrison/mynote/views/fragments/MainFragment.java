@@ -94,10 +94,12 @@ public class MainFragment extends Fragment implements NoteListTouchHelper.Listen
     }
 
     public void addNote(View view) {
-        Note note = new Note();
-        note.text = "Hello";
-        note.title = "Hello World";
-        noteVM.insert(note);
+        EditFragment fragment = EditFragment.newInstance(null, null);
+        FragmentManager manager = this.getActivity().getSupportFragmentManager();
+        manager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override
@@ -144,8 +146,9 @@ public class MainFragment extends Fragment implements NoteListTouchHelper.Listen
         if(note == null) return;
 
         TextView titleView = view.findViewById(R.id.note_title);
+        String transitionName = titleView.getTransitionName();
         Log.v(MainFragment.class.getSimpleName(),titleView.getTransitionName());
-        EditFragment fragment = EditFragment.newInstance(note, titleView.getTransitionName());
+        EditFragment fragment = EditFragment.newInstance(note, transitionName);
 
         FragmentManager manager = this.getActivity().getSupportFragmentManager();
         manager.beginTransaction()
@@ -154,11 +157,6 @@ public class MainFragment extends Fragment implements NoteListTouchHelper.Listen
                 .addToBackStack(null)
                 .commit();
 
-
-//        this.setExitTransition(fadeTransform);
-//        fragment.setEnterTransition(fadeTransform);
-//        fragment.setSharedElementReturnTransition(moveTransform);
-//        fragment.setSharedElementEnterTransition(moveTransform);
     }
 
     /**

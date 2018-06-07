@@ -35,6 +35,7 @@ public class EditFragment extends Fragment {
     private static final String ARG_NOTE_ID = "NoteID", ARG_TRANSITION_ID = "TransitionID";
 
     private Note note;
+    boolean newNote = false;
     private NoteViewModel noteVM;
 
     private EditText titleView;
@@ -57,12 +58,13 @@ public class EditFragment extends Fragment {
      *
      * @return A new instance of fragment EditFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static EditFragment newInstance(Note note, String transitionName) {
         EditFragment fragment = new EditFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_NOTE_ID, note.getId());
-        args.putString(ARG_TRANSITION_ID,transitionName);
+        if(note != null)args.putInt(ARG_NOTE_ID, note.getId());
+        if(transitionName != null) {
+            args.putString(ARG_TRANSITION_ID, transitionName);
+        }
         fragment.setArguments(args);
         fragment.note = note;
         return fragment;
@@ -73,6 +75,10 @@ public class EditFragment extends Fragment {
         super.onCreate(savedInstanceState);
         postponeEnterTransition();
         noteVM = ViewModelProviders.of(this).get(NoteViewModel.class);
+        if( note == null) {
+            note = new Note();
+            newNote = true;
+        }
         if (getArguments() != null) {
             Bundle args = getArguments();
             if(args.containsKey(ARG_NOTE_ID) && note == null){
@@ -88,13 +94,14 @@ public class EditFragment extends Fragment {
             this.note = noteVM.getNoteByid(savedInstanceState.getInt(ARG_NOTE_ID)).getValue();
         }
 
-        Transition moveTransform = TransitionInflater.from(this.getContext())
-                .inflateTransition(R.transition.open_note_transform);
         Transition fadeTransform = TransitionInflater.from(this.getContext())
                 .inflateTransition(android.R.transition.fade);
+        setEnterTransition(fadeTransform);
+
+        Transition moveTransform = TransitionInflater.from(this.getContext())
+                .inflateTransition(R.transition.open_note_transform);
         setSharedElementEnterTransition(moveTransform);
         setSharedElementReturnTransition(moveTransform);
-        setEnterTransition(fadeTransform);
 
     }
 
@@ -111,16 +118,17 @@ public class EditFragment extends Fragment {
     }
 
     public void saveChanges() {
-        noteVM.update(note);
+        if(newNote) noteVM.insert(note);
+        else noteVM.update(note);
     }
 
 
     private void initViewComponents(View myview) {
-        if (note.title != null || !note.title.isEmpty()) {
+        if (note.title != null && !note.title.isEmpty()) {
             titleView.setText(note.title);
             ((TextView)myview.findViewById(R.id.note_title)).setText(note.title);
         }
-        if (note.text != null || !note.text.isEmpty()) {
+        if (note.text != null && !note.text.isEmpty()) {
             contentView.setText(note.text);
         }
         if (note.images == null) {
@@ -133,7 +141,6 @@ public class EditFragment extends Fragment {
             imageHintView.setVisibility(View.GONE);
         }
         textContainerView.setOnClickListener( (View view) -> {
-            Log.v("SCROLL_CLICK","CLICK");
             contentView.setFocusableInTouchMode(true);
             contentView.requestFocus();
             contentView.moveCursorToVisibleOffset();
@@ -181,7 +188,8 @@ public class EditFragment extends Fragment {
             Bundle args = getArguments();
             if(args.containsKey(ARG_TRANSITION_ID)) {
                 String trName = args.getString(ARG_TRANSITION_ID);
-                view.findViewById(R.id.note_title).setTransitionName(trName);
+                Log.v(EditFragment.class.getSimpleName(),trName);
+                titleView.setTransitionName(trName);
             }
         }
 
