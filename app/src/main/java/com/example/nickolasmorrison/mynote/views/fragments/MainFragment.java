@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.Color;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 
 import com.example.nickolasmorrison.mynote.R;
 import com.example.nickolasmorrison.mynote.data.NoteViewModel;
+import com.example.nickolasmorrison.mynote.storage.ImageManager;
 import com.example.nickolasmorrison.mynote.storage.Note;
 import com.example.nickolasmorrison.mynote.views.NoteListAdapter;
 import com.example.nickolasmorrison.mynote.views.NoteListTouchHelper;
@@ -136,6 +138,18 @@ public class MainFragment extends Fragment implements NoteListTouchHelper.Listen
                 noteVM.insert(note);
             });
             snackbar.setActionTextColor(Color.YELLOW);
+            snackbar.addCallback(new Snackbar.Callback(){
+                @Override
+                public void onDismissed(Snackbar transientBottomBar, int event) {
+                    super.onDismissed(transientBottomBar, event);
+                    if(note.images == null || event == Snackbar.Callback.DISMISS_EVENT_ACTION){
+                        return;
+                    }
+                    for(String s: note.images){
+                        ImageManager.deleteImage(getContext(),s);
+                    }
+                }
+            });
             snackbar.show();
         }
     }

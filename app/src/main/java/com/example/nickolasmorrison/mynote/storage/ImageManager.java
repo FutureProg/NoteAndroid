@@ -1,5 +1,6 @@
 package com.example.nickolasmorrison.mynote.storage;
 
+import android.arch.persistence.room.Delete;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -44,7 +45,20 @@ public class ImageManager {
             imageView.setImageBitmap(bitmap);
         }
     }
-    
+
+    static class DeleteAsync extends AsyncTask<String, Void, Void> {
+        @Override
+        protected Void doInBackground(String... path) {
+            File file = new File(path[0]);
+            if(file.delete()){
+                Log.v("ImageManager","Deleted image at path: " + path[0]);
+            }else{
+                Log.v("ImageManager","Failed to delete image at path: " + path[0]);
+            }
+            return null;
+        }
+    }
+
     public static void getExternalDir(Context context){
         if(basePath == null){
             basePath = context.getFilesDir().getAbsolutePath();
@@ -90,6 +104,7 @@ public class ImageManager {
 
     public static void deleteImage(Context context, String path) {
         getExternalDir(context);
+        new DeleteAsync().execute(basePath + path);
     }
 
 }

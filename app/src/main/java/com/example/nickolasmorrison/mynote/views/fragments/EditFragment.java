@@ -2,12 +2,14 @@ package com.example.nickolasmorrison.mynote.views.fragments;
 
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -27,6 +29,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,6 +70,7 @@ public class EditFragment extends Fragment {
     private ScrollView textContainerView;
     private EditText contentView;
     private Button doneButton;
+    private ProgressBar progressWheel;
 
     private ImageListAdapter imageListAdapter;
 
@@ -185,26 +189,52 @@ public class EditFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK){
-            try{
-                final Uri imageUri = data.getData();
-                final InputStream inputStream = getActivity().getContentResolver()
+            final Uri imageUri = data.getData();
+            new ProcessImageAddition(getContext()).execute(imageUri);
+        }
+    }
+
+    class ProcessImageAddition extends AsyncTask<Uri, Void, String> {
+        Context context;
+
+        public ProcessImageAddition(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressWheel.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(Uri... uris) {
+            try {
+                Uri imageUri = uris[0];
+                final InputStream inputStream = context.getContentResolver()
                         .openInputStream(imageUri);
                 final Bitmap image = BitmapFactory.decodeStream(inputStream);
-                final String imagePath = ImageManager.saveImage(getContext(),note,image);
-                if(imagePath != null) {
-                    if(note.images == null) {
-                        note.images = new ArrayList<>();
-                    }
-                    note.images.add(imagePath);
-                    noteVM.update(note);
-                    refreshImages();
-                }else {
-                    Toast.makeText(this.getContext(),"Something went wrong",Toast.LENGTH_SHORT)
-                            .show();
-                }
-            }catch(FileNotFoundException ex){
+                final String imagePath = ImageManager.saveImage(context,note,image);
+                return imagePath;
+            }catch (FileNotFoundException ex) {
                 ex.printStackTrace();
-                Toast.makeText(this.getContext(),"Something went wrong",Toast.LENGTH_SHORT)
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String imagePath) {
+            super.onPostExecute(imagePath);
+            progressWheel.setVisibility(View.GONE);
+            if(imagePath != null) {
+                if(note.images == null) {
+                    note.images = new ArrayList<>();
+                }
+                note.images.add(imagePath);
+                noteVM.update(note);
+                refreshImages();
+            }else {
+                Toast.makeText(context,"Something went wrong",Toast.LENGTH_SHORT)
                         .show();
             }
         }
@@ -291,6 +321,7 @@ public class EditFragment extends Fragment {
         textContainerView = view.findViewById(R.id.note_text_container);
         contentView = view.findViewById(R.id.note_text);
         doneButton = view.findViewById(R.id.done_button);
+        progressWheel = view.findViewById(R.id.progress_circle);
 
         if (getArguments() != null) {
             Bundle args = getArguments();
