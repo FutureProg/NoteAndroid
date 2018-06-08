@@ -150,7 +150,7 @@ public class MainFragment extends Fragment implements NoteListTouchHelper.Listen
 
         FragmentManager manager = this.getActivity().getSupportFragmentManager();
         manager.beginTransaction()
-                .replace(R.id.fragment_container,fragment,EditFragment.class.getSimpleName())
+                .add(R.id.fragment_container,fragment,EditFragment.class.getSimpleName())
                 .addSharedElement(titleView,titleView.getTransitionName())
                 .addToBackStack(null)
                 .commit();

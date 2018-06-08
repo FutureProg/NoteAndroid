@@ -45,12 +45,18 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
             holder.dateView.setText(df.format(current.date));
             if(current.images == null || current.images.isEmpty()){
                 holder.noteImageView.setVisibility(View.GONE);
+                holder.countView.setVisibility(View.GONE);
             } else {
                 ImageManager.loadImage(
                         inflater.getContext(),
                         current.images.get(0),
                         holder.noteImageView
                         );
+                if(current.images.size() > 1){
+                    holder.countView.setText(current.images.size() + "");
+                }else{
+                    holder.countView.setVisibility(View.GONE);
+                }
             }
             if(clickListener != null) {
                 holder.card.setOnClickListener((View v) -> {
@@ -87,6 +93,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
         private final ImageView noteImageView;
         private final View card;
         private final View cardContainer;
+        private final TextView countView;
 
         public NoteViewHolder(View itemView) {
             super(itemView);
@@ -96,6 +103,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
             this.card = itemView.findViewById(R.id.note_card);
             this.cardContainer = itemView.findViewById(R.id.note_card_container);
             this.noteImageView = itemView.findViewById(R.id.note_image_preview);
+            this.countView = itemView.findViewById(R.id.note_image_count);
         }
 
         public View getCardContainer() {
