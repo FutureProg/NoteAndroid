@@ -7,6 +7,7 @@ import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 
 import java.util.Date;
+import java.util.List;
 
 import io.reactivex.annotations.NonNull;
 
@@ -41,7 +42,9 @@ public class Note {
     public String text;
 
     @ColumnInfo( name = "images" )
-    public String[] images;
+    public List<String> images;
+
+
 
     @ColumnInfo( name = "date" )
     public Date date;

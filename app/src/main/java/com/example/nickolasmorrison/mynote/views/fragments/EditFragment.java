@@ -2,11 +2,20 @@ package com.example.nickolasmorrison.mynote.views.fragments;
 
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.transition.Transition;
 import android.support.transition.TransitionInflater;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,10 +29,22 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.nickolasmorrison.mynote.Constants;
 import com.example.nickolasmorrison.mynote.R;
 import com.example.nickolasmorrison.mynote.data.NoteViewModel;
+import com.example.nickolasmorrison.mynote.storage.ImageManager;
 import com.example.nickolasmorrison.mynote.storage.Note;
+import com.example.nickolasmorrison.mynote.views.ImageListAdapter;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -46,6 +67,8 @@ public class EditFragment extends Fragment {
     private ScrollView textContainerView;
     private EditText contentView;
     private Button doneButton;
+
+    private ImageListAdapter imageListAdapter;
 
 
     public EditFragment() {
@@ -83,15 +106,16 @@ public class EditFragment extends Fragment {
             Bundle args = getArguments();
             if(args.containsKey(ARG_NOTE_ID) && note == null){
                 int noteid = getArguments().getInt(ARG_NOTE_ID);
-                noteVM.getNoteByid(noteid).observe(this, (Note data) -> {
-                    this.note = data;
-                    this.initViewComponents(this.getView());
-                });
+                note = noteVM.getNoteByid(noteid).getValue();
             }
         }
 
         if(savedInstanceState != null) {
-            this.note = noteVM.getNoteByid(savedInstanceState.getInt(ARG_NOTE_ID)).getValue();
+            Log.v("InstanceState",savedInstanceState.getInt(ARG_NOTE_ID)+"");
+            noteVM.getNoteByid(savedInstanceState.getInt(ARG_NOTE_ID)).observe(
+                    this,
+                    (Note n) -> {this.note = n; this.initViewComponents(this.getView());}
+            );
         }
 
         Transition fadeTransform = TransitionInflater.from(this.getContext())
@@ -108,6 +132,7 @@ public class EditFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.v("InstanceState","Saved instance state: "+note.getId()+"");
         outState.putInt(ARG_NOTE_ID,note.getId());
     }
 
@@ -122,6 +147,82 @@ public class EditFragment extends Fragment {
         else noteVM.update(note);
     }
 
+    public void loadImage(View view){
+        if(!getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            requestGallery();
+            return;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.add_image_dialog_prompt)
+                .setItems(R.array.add_image_dialog_prompt_choices,
+                        (DialogInterface dialog, int which) -> {
+                            switch (which) {
+                                case 0:
+                                    requestGallery();
+                                    break;
+                                case 1:
+                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                    if(intent.resolveActivity(getContext().getPackageManager()) != null){
+                                        startActivityForResult(intent,Constants.ActivityResultLoadImage);
+                                    }
+                                    break;
+                            }
+                        }
+                ).create().show();
+    }
+
+    private void requestGallery() {
+        Intent intent;
+        intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        if(intent.resolveActivity(getContext().getPackageManager()) != null) {
+            startActivityForResult(intent, Constants.ActivityResultLoadImage);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK){
+            try{
+                final Uri imageUri = data.getData();
+                final InputStream inputStream = getActivity().getContentResolver()
+                        .openInputStream(imageUri);
+                final Bitmap image = BitmapFactory.decodeStream(inputStream);
+                final String imagePath = ImageManager.saveImage(getContext(),note,image);
+                if(imagePath != null) {
+                    if(note.images == null) {
+                        note.images = new ArrayList<>();
+                    }
+                    note.images.add(imagePath);
+                    noteVM.update(note);
+                    refreshImages();
+                }else {
+                    Toast.makeText(this.getContext(),"Something went wrong",Toast.LENGTH_SHORT)
+                            .show();
+                }
+            }catch(FileNotFoundException ex){
+                ex.printStackTrace();
+                Toast.makeText(this.getContext(),"Something went wrong",Toast.LENGTH_SHORT)
+                        .show();
+            }
+        }
+    }
+
+    private void refreshImages() {
+        if (note.images == null || note.images.isEmpty()) {
+            imageShowButton.setVisibility(View.GONE);
+            imageListView.setVisibility(View.GONE);
+            imageHintView.setVisibility(View.VISIBLE);
+        } else {
+            imageShowButton.setVisibility(View.VISIBLE);
+            imageListView.setVisibility(View.VISIBLE);
+            imageHintView.setVisibility(View.GONE);
+        }
+        imageListAdapter.setImagePaths(note.images);
+        imageListAdapter.notifyDataSetChanged();
+    }
 
     private void initViewComponents(View myview) {
         if (note.title != null && !note.title.isEmpty()) {
@@ -131,7 +232,7 @@ public class EditFragment extends Fragment {
         if (note.text != null && !note.text.isEmpty()) {
             contentView.setText(note.text);
         }
-        if (note.images == null) {
+        if (note.images == null || note.images.isEmpty()) {
             imageShowButton.setVisibility(View.GONE);
             imageListView.setVisibility(View.GONE);
             imageHintView.setVisibility(View.VISIBLE);
@@ -168,7 +269,14 @@ public class EditFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) { }
         });
+        addImagesButton.setOnClickListener((View v) -> {this.loadImage(v);});
+        imageHintView.setOnClickListener((View v)->{this.loadImage(v);});
 
+        imageListAdapter = new ImageListAdapter(getContext());
+        imageListAdapter.setImagePaths(note.images);
+        imageListView.setAdapter(imageListAdapter);
+        imageListView.setLayoutManager(new LinearLayoutManager(getContext(),
+                LinearLayoutManager.HORIZONTAL,false));
     }
 
     @Override
@@ -188,13 +296,14 @@ public class EditFragment extends Fragment {
             Bundle args = getArguments();
             if(args.containsKey(ARG_TRANSITION_ID)) {
                 String trName = args.getString(ARG_TRANSITION_ID);
-                Log.v(EditFragment.class.getSimpleName(),trName);
                 titleView.setTransitionName(trName);
             }
         }
 
-        this.initViewComponents(view);
-        startPostponedEnterTransition();
+        if(savedInstanceState == null){
+            this.initViewComponents(view);
+            startPostponedEnterTransition();
+        }
         return view;
     }
 

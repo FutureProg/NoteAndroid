@@ -142,12 +142,10 @@ public class MainFragment extends Fragment implements NoteListTouchHelper.Listen
 
     @Override
     public void onClick(View view, Note note) {
-        Log.v("MainFragment","Swap to editor with note: " + note);
         if(note == null) return;
 
         TextView titleView = view.findViewById(R.id.note_title);
         String transitionName = titleView.getTransitionName();
-        Log.v(MainFragment.class.getSimpleName(),titleView.getTransitionName());
         EditFragment fragment = EditFragment.newInstance(note, transitionName);
 
         FragmentManager manager = this.getActivity().getSupportFragmentManager();
@@ -156,7 +154,6 @@ public class MainFragment extends Fragment implements NoteListTouchHelper.Listen
                 .addSharedElement(titleView,titleView.getTransitionName())
                 .addToBackStack(null)
                 .commit();
-
     }
 
     /**

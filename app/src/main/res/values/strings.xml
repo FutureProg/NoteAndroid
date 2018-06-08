@@ -3,11 +3,17 @@
 
     <string name="delete_swipe_prompt">DELETE</string>
     <string name="done_button">DONE</string>
+
     <string name="add_images_hint">Add Images...</string>
     <string name="note_title_hint">Untitled Note</string>
     <string name="note_content_hint">Note to self...</string>
     <string name="add_image_button_content_description">Add Image</string>
     <string name="view_images_button_content_description">View All Images</string>
+    <string name="add_image_dialog_prompt">Add Image</string>
+    <string-array name="add_image_dialog_prompt_choices">
+        <item>Pick from Phone</item>
+        <item>Take Photo</item>
+    </string-array>
 
 
     <string name="shared_transition_open_note">s_transition_note_edit</string>

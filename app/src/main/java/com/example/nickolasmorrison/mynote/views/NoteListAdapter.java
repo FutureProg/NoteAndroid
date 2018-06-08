@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.nickolasmorrison.mynote.R;
+import com.example.nickolasmorrison.mynote.storage.ImageManager;
 import com.example.nickolasmorrison.mynote.storage.Note;
 
 import java.text.DateFormat;
@@ -42,8 +43,14 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
             holder.titleView.setText(current.title);
             DateFormat df = SimpleDateFormat.getDateInstance();
             holder.dateView.setText(df.format(current.date));
-            if(current.images == null){
+            if(current.images == null || current.images.isEmpty()){
                 holder.noteImageView.setVisibility(View.GONE);
+            } else {
+                ImageManager.loadImage(
+                        inflater.getContext(),
+                        current.images.get(0),
+                        holder.noteImageView
+                        );
             }
             if(clickListener != null) {
                 holder.card.setOnClickListener((View v) -> {

@@ -25,6 +25,11 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Inte
 
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onFragmentInteraction(Uri uri) {
 
     }
