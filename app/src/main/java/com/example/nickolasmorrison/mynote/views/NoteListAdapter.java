@@ -39,6 +39,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
     public void onBindViewHolder(@NonNull NoteViewHolder holder, int position) {
         if(notes != null){
             final Note current = notes.get(position);
+            ImageManager.bufferNote(inflater.getContext(),current,3);
             holder.notePreviewView.setText(current.text);
             holder.titleView.setText(current.title);
             DateFormat df = SimpleDateFormat.getDateInstance();

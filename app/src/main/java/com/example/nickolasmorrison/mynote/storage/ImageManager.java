@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -19,16 +20,19 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+
 
 public class ImageManager {
 
     private static String basePath;
+    private static HashMap<String,Bitmap> memoryCache = new HashMap<>();
 
     static class LoadAsync extends AsyncTask<String, Void, Bitmap> {
 
         ImageView imageView;
 
-        public LoadAsync(ImageView imgView){
+        public LoadAsync(@Nullable ImageView imgView){
             this.imageView = imgView;
         }
 
@@ -36,13 +40,14 @@ public class ImageManager {
         protected Bitmap doInBackground(String... strings) {
             String imagepath = basePath + strings[0];
             Bitmap bitmap = BitmapFactory.decodeFile(imagepath);
+            memoryCache.put(strings[0],bitmap);
             return bitmap;
         }
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
-            imageView.setImageBitmap(bitmap);
+            if(imageView != null) imageView.setImageBitmap(bitmap);
         }
     }
 
@@ -59,14 +64,30 @@ public class ImageManager {
         }
     }
 
+
+
     public static void getExternalDir(Context context){
         if(basePath == null){
             basePath = context.getFilesDir().getAbsolutePath();
         }
     }
 
+    public static void bufferNote(Context context, Note note, int count){
+        getExternalDir(context);
+        if(note.images != null){
+            for(int i = 0; i < note.images.size() && i < count; i++){
+                if(memoryCache.containsKey(note.images.get(i))) continue;
+                new LoadAsync(null).execute(note.images.get(i));
+            }
+        }
+    }
+
     public static void loadImage(Context context, String path, ImageView imageView) {
         getExternalDir(context);
+        if(memoryCache.containsKey(path)){
+            imageView.setImageBitmap(memoryCache.get(path));
+            return;
+        }
         Log.v("ImageManager","Loading image at path: " + path);
         new LoadAsync(imageView).execute(path);
 //        Target trgt = Glide.with(context)
@@ -99,11 +120,13 @@ public class ImageManager {
             e.printStackTrace();
             return null;
         }
+        memoryCache.put(path,bitmap);
         return  path;
     }
 
     public static void deleteImage(Context context, String path) {
         getExternalDir(context);
+        if(memoryCache.containsKey(path)) memoryCache.remove(path);
         new DeleteAsync().execute(basePath + path);
     }
 
