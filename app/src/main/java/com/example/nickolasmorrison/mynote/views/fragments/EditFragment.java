@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.transition.Transition;
 import android.support.transition.TransitionInflater;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -41,9 +42,11 @@ import com.example.nickolasmorrison.mynote.storage.ImageManager;
 import com.example.nickolasmorrison.mynote.storage.Note;
 import com.example.nickolasmorrison.mynote.views.ImageListAdapter;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -168,7 +171,14 @@ public class EditFragment extends Fragment {
                                 case 1:
                                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                     if(intent.resolveActivity(getContext().getPackageManager()) != null){
-                                        startActivityForResult(intent,Constants.ActivityResultLoadImage);
+                                        File photoFile = ImageManager.createTempImageFile(getContext(), note);
+                                        if(photoFile != null){
+                                            Uri photoUri = FileProvider.getUriForFile(getContext(),
+                                                    "com.example.nickolasmorrison.mynote.fileprovider",
+                                                    photoFile);
+                                            intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                                            startActivityForResult(intent,Constants.ActivityResultTakePhoto);
+                                        }
                                     }
                                     break;
                             }
@@ -190,15 +200,24 @@ public class EditFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK){
             final Uri imageUri = data.getData();
-            new ProcessImageAddition(getContext()).execute(imageUri);
+            new ProcessImageAddition(getContext())
+                    .fromPhoto(requestCode == Constants.ActivityResultTakePhoto)
+                    .execute(imageUri);
         }
     }
 
     class ProcessImageAddition extends AsyncTask<Uri, Void, String> {
         Context context;
+        boolean camera;
 
         public ProcessImageAddition(Context context) {
             this.context = context;
+            this.camera = false;
+        }
+
+        public ProcessImageAddition fromPhoto(boolean b){
+            this.camera = b;
+            return this;
         }
 
         @Override
@@ -209,6 +228,9 @@ public class EditFragment extends Fragment {
 
         @Override
         protected String doInBackground(Uri... uris) {
+            if(camera){
+                return ImageManager.saveTempImageFile(context,note);
+            }
             try {
                 Uri imageUri = uris[0];
                 final InputStream inputStream = context.getContentResolver()

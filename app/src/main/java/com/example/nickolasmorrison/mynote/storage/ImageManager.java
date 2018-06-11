@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.ImageView;
@@ -18,6 +19,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,7 +31,8 @@ import java.util.HashMap;
 public class ImageManager {
 
     private static String basePath;
-    private static HashMap<String,Bitmap> memoryCache = new HashMap<>();
+    private static String tempImagePath;
+    private static final HashMap<String,Bitmap> memoryCache = new HashMap<>();
 
     static class LoadAsync extends AsyncTask<String, Void, Bitmap> {
 
@@ -80,6 +86,30 @@ public class ImageManager {
                 new LoadAsync(null).execute(note.images.get(i));
             }
         }
+    }
+
+    public static File createTempImageFile(Context context, Note note) {
+        getExternalDir(context);
+        String timestamp = new SimpleDateFormat("yyyyMMddHHmmssZ").format(new Date());
+        int noteId = note.getId();
+        String filename = "Note_" + noteId + "_" + timestamp;
+        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File tempFile;
+        try {
+            tempFile = File.createTempFile(filename,".jpg",storageDir);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        tempImagePath = tempFile.getAbsolutePath();
+        return tempFile;
+    }
+
+    public static String saveTempImageFile(Context context, Note note){
+        getExternalDir(context);
+        if(tempImagePath == null) return null;
+        Bitmap bitmap = BitmapFactory.decodeFile(tempImagePath);
+        return saveImage(context,note,bitmap);
     }
 
     public static void loadImage(Context context, String path, ImageView imageView) {
