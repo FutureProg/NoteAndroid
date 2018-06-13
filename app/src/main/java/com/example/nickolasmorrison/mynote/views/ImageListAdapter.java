@@ -14,6 +14,7 @@ import java.util.List;
 
 public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.ImageViewHolder> {
 
+    ImageListListener listener;
     private List<String> imagePaths;
     private Context context;
 
@@ -31,12 +32,21 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
         params.setMargins(Math.round(8 * scale), 0, 0, Math.round(8 * scale));
         imgView.setLayoutParams(params);
         imgView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        imgView.setId(R.id.note_image);
         imgView.setImageDrawable(parent.getContext().getDrawable(R.drawable.ic_image_black_semi_transparent24dp));
         return new ImageViewHolder(imgView);
     }
 
+    public void setListener(ImageListListener listener){
+        this.listener = listener;
+    }
+
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
+        holder.imageView.setTransitionName("ImageViewTransition" + position);
+        holder.imageView.setOnClickListener( v -> {
+            if(listener != null) listener.onImageListClick((ImageView) v, position);
+        });
         ImageManager.loadImage(context,imagePaths.get(position),holder.imageView);
     }
 
@@ -47,6 +57,10 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
     @Override
     public int getItemCount() {
         return imagePaths.size();
+    }
+
+    public interface  ImageListListener {
+        public void onImageListClick(ImageView view, int position);
     }
 
     class ImageViewHolder extends RecyclerView.ViewHolder {

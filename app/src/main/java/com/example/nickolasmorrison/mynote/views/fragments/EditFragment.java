@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.transition.Transition;
 import android.support.transition.TransitionInflater;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -45,10 +47,7 @@ import com.example.nickolasmorrison.mynote.views.ImageListAdapter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -57,7 +56,7 @@ import static android.app.Activity.RESULT_OK;
  * Use the {@link EditFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class EditFragment extends Fragment {
+public class EditFragment extends Fragment implements ImageListAdapter.ImageListListener{
 
     private static final String ARG_NOTE_ID = "NoteID", ARG_TRANSITION_ID = "TransitionID";
 
@@ -206,6 +205,19 @@ public class EditFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onImageListClick(ImageView view, int position) {
+        String imageUrl = note.images.get(position);
+        ImageDetailFragment fragment = ImageDetailFragment.createInstance(
+                imageUrl,view.getTransitionName());
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragment_container,fragment,ImageDetailFragment.class.getSimpleName())
+                .addSharedElement(view,view.getTransitionName())
+                .addToBackStack(null)
+                .commit();
+    }
+
     class ProcessImageAddition extends AsyncTask<Uri, Void, String> {
         Context context;
         boolean camera;
@@ -326,6 +338,7 @@ public class EditFragment extends Fragment {
 
         imageListAdapter = new ImageListAdapter(getContext());
         imageListAdapter.setImagePaths(note.images);
+        imageListAdapter.setListener(this);
         imageListView.setAdapter(imageListAdapter);
         imageListView.setLayoutManager(new LinearLayoutManager(getContext(),
                 LinearLayoutManager.HORIZONTAL,false));
